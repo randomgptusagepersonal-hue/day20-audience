@@ -1,0 +1,581 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>The Version Without an Audience · In Your Corner💜✨</title>
+<meta name="theme-color" content="#2B2140">
+<link rel="preload" href="pressstart2p.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="vt323.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:'Press Start 2P';src:url(pressstart2p.woff2) format('woff2');font-display:swap}
+@font-face{font-family:'VT323';src:url(vt323.woff2) format('woff2');font-display:swap}
+:root{
+  --ink:#2B2140;--plum:#4A3A6B;--dusty:#7B68A6;--lav:#B7A6D6;--pale:#E6DDF3;--cream:#FBF3E4;--blue:#A9C4E4;--heart:#8E4FD6;
+  --emo:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji';
+  --px:'Press Start 2P',monospace,var(--emo);--vt:'VT323',monospace,var(--emo);
+  --u:3px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--ink)}
+body{color:var(--ink);font:400 23px/1.22 var(--vt);-webkit-font-smoothing:none;overflow-x:hidden}
+#room{position:fixed;left:0;top:0;z-index:0;image-rendering:pixelated;display:block}
+#fx{position:fixed;inset:0;width:100%;height:100%;z-index:5;pointer-events:none;image-rendering:pixelated}
+main{position:relative;z-index:1;min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:62px 16px 20px}
+.screen{width:100%;display:flex;justify-content:center}
+/* music button: sits above the window and scrolls away, so it never covers the words */
+.mb{position:absolute;top:10px;right:10px;z-index:2;width:42px;height:42px;border-radius:50%;border:2px solid var(--lav);background:var(--cream);display:grid;place-items:center;cursor:pointer;padding:0;box-shadow:0 3px 0 rgba(20,13,38,.5)}
+.mb[hidden]{display:none}
+.mb:focus-visible{outline:3px dashed var(--blue);outline-offset:3px}
+.mb span{display:flex;gap:3px;align-items:flex-end;height:15px}
+.mb i{width:3px;background:var(--dusty);animation:eq 1.4s steps(4) infinite}
+.mb i:nth-child(2){animation-delay:-.45s}.mb i:nth-child(3){animation-delay:-.9s}
+@keyframes eq{0%,100%{height:4px}50%{height:15px}}
+.mb.paused i{animation:none;height:5px}
+.screen[hidden]{display:none}
+svg{display:block}
+
+/* the little system window */
+.win{width:100%;max-width:520px;background:var(--cream);box-shadow:0 -4px 0 var(--ink),0 4px 0 var(--ink),-4px 0 0 var(--ink),4px 0 0 var(--ink),8px 10px 0 rgba(20,13,38,.5)}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--dusty);color:var(--cream);padding:8px 10px;font:8px/1.3 var(--px);box-shadow:inset 0 -3px 0 var(--plum)}
+.bar i{display:flex;gap:4px;flex:none}
+.bar i b{width:10px;height:10px;background:var(--pale);box-shadow:inset -2px -2px 0 var(--lav)}
+.body{padding:20px 20px 22px}
+h1,h2,p{margin:0}
+h1{font:400 clamp(14px,3.9vw,18px)/1.55 var(--px);color:var(--plum)}
+.sub{margin-top:8px;color:var(--dusty);font-size:22px}
+.rule{height:4px;margin:16px 0;background:repeating-linear-gradient(90deg,var(--lav) 0 8px,transparent 8px 16px)}
+.who{display:flex;align-items:center;gap:14px}
+.pic{flex:none;padding:6px 10px 0;background:var(--pale);box-shadow:0 0 0 3px var(--lav)}
+.pic svg{width:calc(16px*3);height:calc(22px*3)}
+.who h2{font:400 10px/1.7 var(--px);color:var(--ink)}
+.who p{margin-top:6px;color:var(--plum)}
+.cur{display:inline-block;width:9px;height:17px;margin-left:5px;vertical-align:-2px;background:var(--dusty);animation:blink 1.2s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.nw{white-space:nowrap}
+.quiet{margin-top:16px;color:var(--plum)}
+.btn{display:block;width:100%;margin-top:18px;padding:13px 12px 12px;border:0;cursor:pointer;font:400 25px/1 var(--vt);letter-spacing:.04em;color:var(--cream);background:var(--plum);box-shadow:0 -3px 0 var(--ink),0 3px 0 var(--ink),-3px 0 0 var(--ink),3px 0 0 var(--ink),inset -3px -3px 0 #372A52,inset 3px 3px 0 var(--dusty)}
+.btn:hover{background:#584679}
+.btn:active{transform:translateY(2px)}
+.btn:focus-visible{outline:3px dashed var(--blue);outline-offset:6px}
+
+/* the three cards */
+.prog{display:flex;align-items:center;gap:5px;flex:none}
+.prog i{width:9px;height:9px;background:rgba(251,243,228,.3)}
+.prog i.on{background:var(--cream)}
+.prog span{margin-left:4px;font:8px/1 var(--px)}
+.eye{font:8px/1 var(--px);color:var(--dusty);margin-bottom:9px}
+#cardH{font:400 12px/1.65 var(--px);color:var(--plum);outline:0}
+.art{display:flex;justify-content:center;align-items:center;gap:12px;margin:14px 0;padding:14px 8px;background:var(--pale);min-height:calc(var(--u)*36 + 28px)}
+.art svg{flex:none}
+.mini{flex:none;box-shadow:0 0 0 3px var(--ink);background:var(--ink)}
+.mini em{display:block;font:normal 7px/1 var(--px);color:var(--cream);background:var(--dusty);padding:5px 4px 4px;text-align:center}
+.mini.us em{background:var(--plum)}
+#cardH{min-height:3.3em}
+#cardT{min-height:8.6em}
+/* a little note tucked inside the card */
+.psbtn{display:flex;align-items:center;gap:8px;width:100%;margin-top:10px;padding:8px 10px;background:transparent;border:2px dashed var(--lav);cursor:pointer;text-align:left;font:400 22px/1.05 var(--vt);color:var(--plum)}
+.psbtn:hover{background:var(--pale)}
+.psbtn:focus-visible{outline:3px dashed var(--dusty);outline-offset:3px}
+.psbtn span{flex:1}
+.psbtn b{font-weight:400;white-space:nowrap}
+.fold{flex:none;width:22px;height:18px}
+.pm{flex:none;position:relative;width:12px;height:12px}
+.pm::before,.pm::after{content:'';position:absolute;background:var(--dusty)}
+.pm::before{left:0;right:0;top:5px;height:2px}
+.pm::after{top:0;bottom:0;left:5px;width:2px}
+.psbtn[aria-expanded="true"] .pm::after{display:none}
+.psnote{position:relative;margin-top:10px;padding:14px 16px 4px;background:var(--pale);overflow-wrap:anywhere;animation:unfold .3s steps(6) both}
+.psnote[hidden]{display:none}
+.psnote::after{content:'';position:absolute;top:0;right:0;width:14px;height:14px;background:linear-gradient(225deg,var(--cream) 50%,var(--lav) 50%)}
+.psnote p{margin:0 0 .65em;line-height:1.25}
+@keyframes unfold{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0)}}
+.pop{animation:pop .3s steps(4) both}
+@keyframes pop{from{opacity:0;transform:translateY(8px)}}
+.beat{animation:beat 1.6s steps(1) infinite}
+@keyframes beat{0%,70%,100%{opacity:1}80%{opacity:.55}}
+
+/* the quiet ending: no window, only the sky */
+.final{max-width:500px;text-align:center;color:var(--cream)}
+.duo{display:flex;align-items:flex-end;justify-content:center;gap:2px;margin-bottom:22px}
+.duo svg.s{width:calc(16px*4);height:calc(22px*4);filter:drop-shadow(0 0 7px rgba(183,166,214,.4))}
+.duo svg.h{width:calc(9px*3);height:calc(8px*3);margin:0 2px 66px}
+.final h2{font:400 clamp(14px,4vw,18px)/1.6 var(--px);color:var(--pale)}
+.final p{margin-top:18px;font-size:25px;line-height:1.25;text-wrap:balance}
+.final .sig{color:var(--lav)}
+.btn.ghost{width:auto;display:inline-block;margin-top:24px;padding:11px 20px 10px;font-size:22px;color:var(--pale);background:transparent;box-shadow:0 -3px 0 var(--lav),0 3px 0 var(--lav),-3px 0 0 var(--lav),3px 0 0 var(--lav)}
+.btn.ghost:hover{background:rgba(183,166,214,.16)}
+
+@media (min-width:600px){
+  :root{--u:4px}
+  .bar{font-size:9px}
+  .body{padding:24px 28px 26px}
+  .who h2{font-size:12px}
+  #cardH{font-size:13px}
+  #cardH{min-height:0}
+  #cardT{min-height:6.2em}
+}
+@media (max-width:359px){:root{--u:2.5px}body{font-size:21px}.body{padding:16px 14px 18px}.btn{font-size:22px}}
+@media (max-width:599px) and (max-height:720px){.art{margin:10px 0;padding:8px;min-height:0}.body{padding-top:14px;padding-bottom:16px}}
+@media (min-width:600px){main{padding:20px 16px}}
+@media (prefers-reduced-motion:reduce){.pop,.beat,.cur,.psnote,.mb i{animation:none}.mb i{height:9px}.mb.paused i{height:5px}.btn:active{transform:none}}
+</style>
+</head>
+<body>
+<canvas id="room" aria-hidden="true"></canvas>
+
+<main>
+  <button class="mb" id="mb" type="button" hidden aria-label="Pause music"><span aria-hidden="true"><i></i><i></i><i></i></span></button>
+  <section class="screen" id="open" aria-label="Private profile">
+    <div class="win">
+      <div class="bar" aria-hidden="true"><span>IN YOUR CORNER · DAY 20</span><i><b></b><b></b></i></div>
+      <div class="body">
+        <h1>THE VERSION WITHOUT AN AUDIENCE</h1>
+        <p class="sub">a little something about the Arjun I get to know ♡</p>
+        <div class="rule"></div>
+        <div class="who">
+          <div class="pic" id="pic" aria-hidden="true"></div>
+          <div>
+            <h2>PRIVATE PROFILE // ARJUN</h2>
+            <p>Access granted to: <span class="nw">Kanmani ♡<span class="cur" aria-hidden="true"></span></span></p>
+          </div>
+        </div>
+        <p class="quiet">Some versions of a person aren't meant for an audience.</p>
+        <button class="btn" id="openBtn" type="button">OPEN THE LITTLE FILE →</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen" id="card" hidden aria-label="The little file">
+    <div class="win">
+      <div class="bar"><span aria-hidden="true">PRIVATE PROFILE</span><div class="prog" id="prog"></div></div>
+      <div class="body" id="cardBody" aria-live="polite">
+        <p class="eye" id="cardE"></p>
+        <h2 id="cardH"></h2>
+        <div class="art" id="cardA" aria-hidden="true"></div>
+        <p id="cardT"></p>
+        <button class="psbtn" id="psBtn" type="button" aria-expanded="false" aria-controls="psNote">
+          <svg class="fold" viewBox="0 0 11 9" shape-rendering="crispEdges" aria-hidden="true"><path fill="#4A3A6B" d="M0 0h11v9H0z"/><path fill="#FBF3E4" d="M1 1h9v7H1z"/><path fill="#B7A6D6" d="M1 1h1v1h1v1h1v1h3V3h1V2h1V1h1v1H9v1H8v1H7v1H4V4H3V3H2V2H1z"/></svg>
+          <span>A LITTLE P.S. FROM <b>KANMANI ♡</b></span>
+          <i class="pm" aria-hidden="true"></i>
+        </button>
+        <div class="psnote" id="psNote" hidden></div>
+        <button class="btn" id="nextBtn" type="button">NEXT LITTLE THING →</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen" id="end" hidden aria-label="No performance required">
+    <div class="final">
+      <div class="duo" id="duo" aria-hidden="true"></div>
+      <h2>NO PERFORMANCE REQUIRED. ♡</h2>
+      <p>You don't have to be impressive every second, Ammu. I like getting to know you in all the little moments in between, too. You can just be you with me. 💜</p>
+      <p class="sig">— your Kanmani 💜</p>
+      <button class="btn ghost" id="closeBtn" type="button">CLOSE FILE ↺</button>
+    </div>
+  </section>
+</main>
+<canvas id="fx" aria-hidden="true"></canvas>
+
+<script>
+(() => {
+const $ = s => document.querySelector(s);
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- pixel helpers ---------- */
+function rects(rows, pal, ox = 0, oy = 0) {
+  let r = '';
+  rows.forEach((row, y) => {
+    let x = 0;
+    while (x < row.length) {
+      const c = row[x];
+      if (c === '.' || !pal[c]) { x++; continue; }
+      let e = x; while (e < row.length && row[e] === c) e++;
+      r += `<rect x="${x + ox}" y="${y + oy}" width="${e - x}" height="1" fill="${pal[c]}"/>`;
+      x = e;
+    }
+  });
+  return r;
+}
+const R = (x, y, w, h, c) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${c}"/>`;
+const svg = (w, h, inner) => `<svg viewBox="0 0 ${w} ${h}" style="width:calc(var(--u)*${w});height:calc(var(--u)*${h})" shape-rendering="crispEdges">${inner}</svg>`;
+
+/* the two chibis from Day 12 */
+const ARJUN = {
+  pal: { o: '#2b1630', h: '#EBD3A2', H: '#C7A46F', b: '#5B3A28', k: '#1E1515', s: '#B97B4F', g: '#2A2230', w: '#FFF4E8', e: '#1E1515', d: '#3A2A22', t: '#3D4963', r: '#A8723E', p: '#2A2F45', n: '#4A3326' },
+  base: [
+    '.....oooooo.....',
+    '....ohhhhhho....',
+    '....ohhhhhHo....',
+    '...obbbbbbbbo...',
+    '.oohhhhhhhhhhoo.',
+    'ohhhhhhhhhhhhhHo',
+    '.ookkkkkkkkkkoo.',
+    '..okssssssssko..',
+    '..oggggggggggo..',
+    '..ogwegssgwego..',
+    '..oggggssggggo..',
+    '..odssssssssdo..',
+    '..oddswwwwsddo..',
+    '...oddddddddo...',
+    '....oddddddo....',
+    '..otttttrtttto..',
+    '.ostttwwtrtttso.',
+    '.ostwwwwttrttso.',
+    '.oottttttttrtoo.',
+    '...oppppppppo...',
+    '...oppo..oppo...',
+    '...onno..onno...'],
+  happy: { 9: '..ogssgssgssgo..', 10: '..ogeegssgeego..', 12: '..oddwwwwwwddo..' },
+};
+const KAN = {
+  pal: { o: '#2b1630', c: '#5C5B63', C: '#3E3D45', w: '#E9E4DA', k: '#4A2C1C', K: '#6E4630', s: '#C98B5C', e: '#2A160C', W: '#FFFFFF', p: '#E98A8A', l: '#D3E6F7', L: '#A9C3DE', m: '#8C8478', r: '#C2463A', R: '#F1E6CF', j: '#6D86AA', n: '#4A3326' },
+  base: [
+    '................',
+    '................',
+    '.....oooooo.....',
+    '....occcccco....',
+    '...occcwwccco...',
+    '..occcccccccco..',
+    'oCCCCCcccccccco.',
+    '..okkkkkkkkkko..',
+    '..okkssssskkko..',
+    '.okssssssssssko.',
+    '.oksWeessWeesko.',
+    '.okseeesseeesko.',
+    '.okpssswwssspko.',
+    '.okkossssssokko.',
+    'okKkkossssokkKko',
+    'okkKllllllllKko.',
+    '.oslllllllrRlso.',
+    '.osllmmllrRllso.',
+    '.ooLLLLLrRLLLoo.',
+    '...ojjjjjjjjo...',
+    '...ojjo..ojjo...',
+    '...onno..onno...'],
+  happy: { 10: '.okssessssessko.', 11: '.oksesessesesko.' },
+};
+const sprite = (d, happy, ox = 0, oy = 0) => rects(d.base.map((row, y) => (happy && d.happy[y]) || row), d.pal, ox, oy);
+const HEART = ['.kk...kk.', 'kppk.kppk', 'kpwpppPPk', 'kppppppPk', '.kppppPk.', '..kpppk..', '...kpk...', '....k....'];
+const HPAL = { k: '#2B2140', p: '#8E4FD6', P: '#6B35AE', w: '#D9BDF5' };
+const TINY = ['.p.p.', 'ppppp', 'ppppp', '.ppp.', '..p..'];
+
+/* ---------- card art: all symbolic, no real schedules, messages or foods ---------- */
+function artRole() {
+  // the same Arjun in both windows: two settings, one person
+  let a = R(0, 0, 44, 36, '#C6DAEF') + R(0, 26, 44, 10, '#F1E6CF') + R(35, 2, 4, 8, '#FBF3E4') + R(33, 4, 8, 4, '#FBF3E4');
+  a += R(5, 5, 8, 2, '#EAF2FA') + R(3, 7, 12, 2, '#EAF2FA');
+  a += sprite(ARJUN, false, 14, 5);
+  [[2, 30], [8, 31], [35, 31], [40, 30]].forEach(([x, y]) => { a += R(x, y, 3, 2, '#7B68A6') + R(x - 1, y + 2, 5, 4, '#7B68A6'); });
+  let b = R(0, 0, 44, 36, '#332A62') + R(0, 14, 44, 8, '#433673') + R(0, 32, 44, 4, '#5A4A80');
+  b += R(36, 2, 3, 7, '#F3E6D2') + R(34, 4, 7, 3, '#F3E6D2');
+  [[4, 3], [12, 7], [26, 2], [30, 9]].forEach(([x, y]) => { b += R(x, y, 1, 1, '#FBF3E4'); });
+  b += sprite(ARJUN, true, 3, 13) + sprite(KAN, true, 24, 13) + rects(TINY, { p: '#D9BDF5' }, 19, 9);
+  return `<div class="mini"><em>OUT THERE</em>${svg(44, 36, a)}</div><div class="mini us"><em>JUST US</em>${svg(44, 36, b)}</div>`;
+}
+function artTime() {
+  let s = R(2, 4, 34, 30, '#2B2140') + R(3, 5, 32, 28, '#FBF3E4') + R(3, 5, 32, 6, '#7B68A6');
+  [8, 27].forEach(x => { s += R(x, 2, 3, 6, '#2B2140') + R(x + 1, 3, 1, 4, '#E6DDF3'); });
+  const on = new Set([1, 2, 5, 8, 9, 11, 12, 15, 17, 18]);
+  for (let r = 0; r < 4; r++) for (let c = 0; c < 5; c++) s += R(5 + c * 6, 13 + r * 5, 4, 3, on.has(r * 5 + c) ? '#B7A6D6' : '#E6DDF3');
+  s += R(44, 2, 18, 32, '#2B2140') + R(45, 3, 16, 30, '#4A3A6B') + R(46, 6, 14, 23, '#E6DDF3') + R(51, 30, 4, 1, '#B7A6D6') + R(50, 4, 6, 1, '#7B68A6');
+  s += `<g class="beat">${rects(HEART, HPAL, 49, 13)}</g>`;
+  return svg(64, 36, s);
+}
+function artSoYou() {
+  // message bubble
+  let s = R(3, 3, 24, 2, '#2B2140') + R(1, 5, 2, 12, '#2B2140') + R(27, 5, 2, 12, '#2B2140') + R(3, 17, 24, 2, '#2B2140') + R(3, 5, 24, 12, '#FBF3E4');
+  s += R(6, 19, 4, 2, '#2B2140') + R(6, 21, 2, 2, '#2B2140') + R(7, 17, 3, 2, '#FBF3E4');
+  [8, 14, 20].forEach(x => { s += R(x, 10, 3, 3, '#7B68A6'); });
+  // snack packet, deliberately no brand or flavour
+  s += R(34, 8, 16, 26, '#2B2140') + R(35, 9, 14, 24, '#C8B3E6') + R(35, 9, 14, 4, '#8E7BB8') + R(35, 29, 14, 4, '#8E7BB8') + R(39, 16, 6, 9, '#FBF3E4') + R(38, 18, 8, 5, '#FBF3E4') + R(40, 19, 1, 1, '#7B68A6') + R(43, 21, 1, 1, '#7B68A6') + R(41, 22, 1, 1, '#7B68A6');
+  [34, 38, 42, 46].forEach(x => { s += R(x, 6, 2, 2, '#2B2140') + R(x + 2, 34, 2, 1, '#2B2140'); });
+  [[52, 31], [31, 32], [53, 27]].forEach(([x, y]) => { s += R(x, y, 2, 2, '#B7A6D6'); });
+  // heart
+  s += `<g class="beat" transform="translate(56 10) scale(2)">${rects(HEART, HPAL)}</g>`;
+  return svg(74, 36, s);
+}
+
+const CARDS = [
+  { h: 'THE VERSION BEHIND THE ROLE', art: artRole, t: "I know the Arjun people see in the community isn't the whole picture. There's also the version I get to know in our own little world — and I love that I get to learn that side of you, too.",
+    ps: [
+      "and those cute, goofy sides of you and that childish version of you? they're my favs, brooo. 😭💜 like watching some little child get all excited, as if he's just been handed the whole lil world he's ever wanted.",
+      "THAT version of you is so precious to me. love you, babe!!! 🥹",
+    ] },
+  { h: 'THE TIME YOU STILL MAKE', art: artTime, t: "You're juggling your company, your work, and community commitments, and somehow you still make room to call me, text me, or tell me what's going on. I know you're busy, Ammu. I don't take those little moments for granted.",
+    ps: [
+      "brooo, let me tell you again: DON'T YOU DARE FEEL BAD ABOUT NOT SPENDING SO MUCH TIME WITH ME. 😭💜 whatever you're doing is enough. it's not like you're ignoring me and out there partying or something. you're busy with work, and i know that if you have the time, you'd definitely want to spend it with me. and that's okay.",
+      "yes, ofc i'll get mad if you're out there doing some useless stuff without talking to me 😂 but yk that's different!! the point is, even with everything you have going on, you STILL make time for me. i see that, and it means a lot. so don't feel bad, okay?",
+      "you're stuck with me, man!! i ain't going anywhere before i get to bicker with you for at least 25 more years. MINIMUM. 😭😂💜",
+    ] },
+  { h: 'THE LITTLE THINGS THAT ARE SO YOU', art: artSoYou, t: "The random “love you” and “miss you” messages. Remembering my food cravings. Replying to my reels when you finally get a moment. They're such small things, but they're part of why being loved by you feels so personal to me.",
+    ps: [
+      "brooo, sometimes i feel bad when you take care of me, because being on the receiving end of things like that feels so new to me. 😭 i'm not really used to being cared for like that, and tbh it scares me a little sometimes.",
+      "but please don't think that means i don't appreciate it, okay? those little things genuinely mean so much to me. i'm still learning how to receive that kind of care without feeling weird or not knowing what to do with it. 🥹💜",
+      "i might not always know how to express it properly, but i notice it, and it matters to me more than you know.",
+    ] },
+];
+
+$('#pic').innerHTML = `<svg viewBox="0 0 16 22" shape-rendering="crispEdges">${sprite(ARJUN)}</svg>`;
+$('#duo').innerHTML = `<svg class="s" viewBox="0 0 16 22" shape-rendering="crispEdges">${sprite(ARJUN, true)}</svg><svg class="h beat" viewBox="0 0 9 8" shape-rendering="crispEdges">${rects(HEART, { ...HPAL, k: '#E6DDF3' })}</svg><svg class="s" viewBox="0 0 16 22" shape-rendering="crispEdges">${sprite(KAN, true)}</svg>`;
+
+/* ---------- the room behind everything (drawn low-res, scaled up) ---------- */
+const room = $('#room'), g = room.getContext('2d'), still = document.createElement('canvas');
+let sg = still.getContext('2d'), W = 0, H = 0, lights = [], quiet = false;
+function rng(seed) { return () => { seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+const box = (x, y, w, h, c) => { sg.fillStyle = c; sg.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h)); };
+function bands(x, y, w, h, cols) {
+  const n = cols.length;
+  cols.forEach((c, i) => {
+    const y0 = Math.round(y + h * i / n), y1 = Math.round(y + h * (i + 1) / n);
+    box(x, y0, w, y1 - y0, c);
+    if (i < n - 1) { sg.fillStyle = cols[i + 1]; for (let k = 0; k < w; k += 2) sg.fillRect(Math.round(x) + k, y1 - 1, 1, 1); }
+  });
+}
+function disc(cx, cy, r, c) { sg.fillStyle = c; for (let dy = -r; dy <= r; dy++) { const dx = Math.floor(Math.sqrt(r * r - dy * dy)); sg.fillRect(cx - dx, cy + dy, dx * 2 + 1, 1); } }
+function glow(cx, cy, r, c, a = .3) {
+  sg.fillStyle = c;
+  for (let y = -r; y <= r; y++) for (let x = -r; x <= r; x++) {
+    const d = Math.hypot(x, y) / r;
+    if (d < 1 && (x + y & 1) === 0) { sg.globalAlpha = a * (1 - d); sg.fillRect(cx + x, cy + y, 1, 1); }
+  }
+  sg.globalAlpha = 1;
+}
+function cloud(x, y, w, c) { box(x + w * .15, y, w * .4, 2, c); box(x + w * .45, y + 1, w * .3, 2, c); box(x, y + 2, w, 3, c); box(x + w * .1, y + 5, w * .7, 1, c); }
+function drawQuiet() {
+  lights = [];
+  const r = rng(29);
+  bands(0, 0, W, H, ['#17102C', '#1C1436', '#221940', '#2A1F4C', '#32255A']);
+  const big = W > 200, mx = Math.round(W * (big ? .84 : .78)), my = Math.round(H * (big ? .17 : .09)), mr = big ? 13 : 9;
+  glow(mx, my, mr * 3, '#E6DDF3', .22); disc(mx, my, mr, '#EDE3D2'); disc(mx - 3, my - 2, 2, '#D9CCBF'); disc(mx + 3, my + 3, 1, '#D9CCBF');
+  const P = W ? innerWidth / W : 1, t = $('.final').getBoundingClientRect(), pad = 14;
+  for (let i = 0, tries = 0; i < 14 && tries < 400; tries++) {
+    const x = Math.floor(r() * W), y = Math.floor(r() * H), cx = x * P, cy = y * P;
+    if (cx > t.left - pad && cx < t.right + pad && cy > t.top - pad && cy < t.bottom + pad) continue;
+    if (Math.hypot(x - mx, y - my) < mr + 3) continue;
+    lights.push({ x, y, c: i % 3 ? '#E6DDF3' : '#B7A6D6', ph: i, sky: true }); i++;
+  }
+}
+function drawRoom() {
+  lights = [];
+  const r = rng(7), tall = H > W;
+  bands(0, 0, W, H, ['#3B2D62', '#3F3068', '#44356F', '#3F3068']);
+  // window
+  const wx = Math.round(W * (tall ? .07 : .13)), ww = W - wx * 2, wy = Math.round(H * .055), wh = Math.round(H * (tall ? .4 : .5));
+  bands(wx, wy, ww, wh, ['#241E50', '#2F2762', '#403378', '#5A4A96', '#7E68B4', '#A888C8']);
+  for (let i = 0, n = Math.round(ww * wh / 260); i < n; i++) {
+    const sx = wx + 2 + Math.floor(r() * (ww - 4)), sy = wy + 2 + Math.floor(r() * wh * .62);
+    if (i % 3 === 0) lights.push({ x: sx, y: sy, c: '#FBF3E4', ph: i }); else box(sx, sy, 1, 1, i % 2 ? '#D9CCF0' : '#A9C4E4');
+  }
+  const mr = Math.round(Math.min(ww, wh) * (tall ? .1 : .16)), mx = Math.round(wx + ww * (tall ? .72 : .85)), my = Math.round(wy + wh * (tall ? .12 : .36));
+  glow(mx, my, Math.round(mr * 2.1), '#F3E6D2', .34); disc(mx, my, mr, '#F3E6D2');
+  disc(mx - Math.round(mr * .4), my - Math.round(mr * .25), Math.max(1, Math.round(mr * .2)), '#DFD0C2'); disc(mx + Math.round(mr * .35), my + Math.round(mr * .3), Math.max(1, Math.round(mr * .14)), '#DFD0C2'); disc(mx + Math.round(mr * .15), my - Math.round(mr * .5), 1, '#DFD0C2');
+  const cw = Math.round(ww * .32);
+  cloud(wx + ww * .05, wy + wh * .24, cw, '#7C69AE'); cloud(wx + ww * .32, wy + wh * .56, cw, '#B597CC'); cloud(wx + ww * .66, wy + wh * .7, cw * .8, '#C7A6D2'); cloud(wx + ww * .02, wy + wh * .76, cw * .9, '#A487C2');
+  // frame + curtains
+  const fc = '#211A3C';
+  box(wx - 2, wy - 2, ww + 4, 2, fc); box(wx - 2, wy, 2, wh, fc); box(wx + ww, wy, 2, wh, fc);
+  box(wx + ww / 2 - 1, wy, 2, wh, fc); box(wx, wy + Math.round(wh * .66), ww, 2, fc);
+  const cuw = Math.round(ww * (tall ? .1 : .07));
+  [wx - 3, wx + ww + 3 - cuw].forEach(cx => { box(cx, wy - 2, cuw, wh + 3, '#C8B8E4'); for (let k = 2; k < cuw; k += 4) box(cx + k, wy - 2, 1, wh + 3, '#A995CC'); });
+  box(wx - 8, wy - 4, ww + 16, 2, '#6E5A98');
+  // sill
+  const sy = wy + wh;
+  box(wx - 6, sy, ww + 12, 3, '#6B5894'); box(wx - 6, sy + 3, ww + 12, 1, '#2B2140');
+  // sleepy cat on the sill
+  const cat = ['.k...k..........', '.kk.kk...kkkk...', '.kkkkkkkkkkkkkk.', 'kkkkkkkkkkkkkkkk', 'kkkkkkkkkkkkkkkk', '.kkkkkkkkkkkkkk.'];
+  const cx = Math.round(wx + ww * .13);
+  sg.fillStyle = '#1E1732'; cat.forEach((row, y) => { for (let x = 0; x < row.length; x++) if (row[x] === 'k') sg.fillRect(cx + x, sy - 6 + y, 1, 1); });
+  // plant on the sill
+  const px = Math.round(wx + ww * .8); box(px, sy - 4, 6, 4, '#C49A8C'); box(px + 1, sy - 8, 1, 4, '#7FA88F'); box(px + 3, sy - 10, 1, 6, '#7FA88F'); box(px + 5, sy - 7, 1, 3, '#6A9480'); box(px - 1, sy - 7, 2, 1, '#7FA88F');
+  // fairy lights across the top
+  const n = Math.round(W / 9);
+  for (let i = 0; i <= n; i++) {
+    const t = i / n, x = Math.round(t * W), y = 2 + Math.round(Math.abs(Math.sin(t * Math.PI * 3)) * (wy - 2) * .7);
+    box(x, y - 1, 1, 1, '#211A3C');
+    lights.push({ x, y, c: '#FFE8AE', ph: i * 2, big: true });
+  }
+  // floor + rug
+  const fy = Math.round(H * (tall ? .885 : .82));
+  bands(0, fy, W, H - fy, ['#2F2450', '#281E46', '#231A3E']); box(0, fy - 1, W, 1, '#211A3C');
+  const rw = Math.round(W * .46), rx = Math.round((W - rw) / 2), ry = fy + Math.round((H - fy) * .35), rh = Math.round((H - fy) * .45);
+  box(rx, ry, rw, rh, '#5C4B86'); box(rx + 2, ry + 1, rw - 4, rh - 2, '#6D5B99'); box(rx + 4, ry + Math.round(rh / 2), rw - 8, 1, '#8672B0');
+  // desk on the left
+  const dw = Math.round(W * (tall ? .5 : .36)), dy = Math.round(H * (tall ? .77 : .64));
+  box(0, dy + 3, dw - 3, fy - dy, '#46376E'); box(dw - 12, dy + 3, 9, fy - dy, '#55447E');
+  [.34, .66].forEach(f => { const ty = dy + 3 + (fy - dy) * f; box(dw - 11, ty, 7, 1, '#2F2450'); box(dw - 9, ty - 3, 3, 1, '#B7A6D6'); });
+  box(0, dy, dw, 3, '#9379B4'); box(0, dy + 3, dw, 1, '#2B2140');
+  // monitor + glow
+  const mw = Math.round(Math.min(dw * .5, 34)), mh = Math.round(mw * .68), mox = Math.round(dw * .3), moy = dy - mh - 4;
+  glow(mox + mw / 2 | 0, moy + mh / 2 | 0, mw, '#BFE3EE', .36);
+  box(mox - 1, moy - 1, mw + 2, mh + 2, '#211A3C'); bands(mox, moy, mw, mh, ['#D5EFF2', '#BFE3EE', '#A9C4E4']);
+  box(mox + mw / 2 - 2, dy - 4, 4, 4, '#E6DDF3'); box(mox + mw / 2 - 5, dy - 1, 10, 1, '#E6DDF3');
+  // small round lamp on the desk
+  const lx = Math.round(dw * .12), lr = Math.max(4, Math.round(dw * .05));
+  glow(lx, dy - lr - 1, lr * 3, '#FFD9A0', .42); disc(lx, dy - lr - 1, lr, '#FFDFA8');
+  // bed on the right
+  const bw = Math.round(W * (tall ? .4 : .32)), bx = W - bw, by = Math.round(H * (tall ? .82 : .7));
+  box(bx, by + 4, bw, fy - by + 1, '#3A2C62'); box(bx, by, bw, 6, '#8F6FA8'); box(bx, by + 6, bw, 2, '#755A92');
+  box(W - Math.round(bw * .4), by - 4, Math.round(bw * .36), 5, '#E6DDF3'); box(W - Math.round(bw * .4), by, Math.round(bw * .36), 1, '#B7A6D6');
+  // bedside lamp
+  const nx = bx - 4, ny = Math.round(by + (fy - by) * .2);
+  box(nx - 7, ny, 11, fy - ny, '#55447E'); box(nx - 8, ny, 13, 2, '#9379B4');
+  glow(nx - 2, ny - 8, 15, '#F3B6CF', .4); box(nx - 2, ny - 5, 1, 5, '#2B2140'); box(nx - 6, ny - 11, 9, 2, '#F6C3D7'); box(nx - 7, ny - 9, 11, 4, '#F3B6CF');
+}
+function paint(tick = 0) {
+  g.drawImage(still, 0, 0);
+  lights.forEach(l => {
+    const on = RM || (tick + l.ph) % (l.sky ? 5 : 4) !== 0;
+    g.fillStyle = l.c; g.globalAlpha = on ? 1 : .35;
+    g.fillRect(l.x, l.y, 1, 1);
+    if (l.big) { g.globalAlpha = on ? .35 : .12; g.fillRect(l.x - 1, l.y, 3, 1); g.fillRect(l.x, l.y - 1, 1, 3); }
+    g.globalAlpha = 1;
+  });
+}
+function build() {
+  const vw = window.innerWidth, vh = window.innerHeight, P = vw < 600 ? 3 : 4;
+  W = Math.ceil(vw / P); H = Math.ceil(vh / P);
+  [room, still].forEach(c => { c.width = W; c.height = H; });
+  room.style.width = W * P + 'px'; room.style.height = H * P + 'px';
+  (quiet ? drawQuiet : drawRoom)();
+  paint();
+}
+let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(build, 120); });
+let tk = 0; if (!RM) setInterval(() => { if (!document.hidden) paint(++tk); }, 700);
+
+/* ---------- short pixel dissolve between screens ---------- */
+const fx = $('#fx'), fg = fx.getContext('2d');
+let busy = false;
+function dissolve(mid) {
+  if (RM) { mid(); return; }
+  busy = true;
+  const cols = Math.ceil(innerWidth / 18), rows = Math.ceil(innerHeight / 18);
+  fx.width = cols; fx.height = rows;
+  const cells = []; for (let i = 0; i < cols * rows; i++) cells.push(i);
+  for (let i = cells.length - 1; i > 0; i--) { const j = Math.random() * (i + 1) | 0; [cells[i], cells[j]] = [cells[j], cells[i]]; }
+  fg.fillStyle = '#2B2140';
+  const step = Math.ceil(cells.length / 12); let k = 0, out = false;
+  const iv = setInterval(() => {
+    for (let n = 0; n < step && k < cells.length; n++, k++) {
+      const x = cells[k] % cols, y = cells[k] / cols | 0;
+      if (out) fg.clearRect(x, y, 1, 1); else fg.fillRect(x, y, 1, 1);
+    }
+    if (k >= cells.length) {
+      if (out) { clearInterval(iv); busy = false; return; }
+      mid(); out = true; k = 0;
+    }
+  }, 18);
+}
+
+/* ---------- flow ---------- */
+let i = 0;
+function show(id) { ['open', 'card', 'end'].forEach(s => { $('#' + s).hidden = s !== id; }); scrollTo(0, 0); }
+function renderCard() {
+  const c = CARDS[i], n = String(i + 1).padStart(2, '0');
+  $('#cardE').textContent = `CARD ${n}`;
+  $('#cardH').textContent = c.h;
+  $('#cardA').innerHTML = c.art();
+  $('#cardT').textContent = c.t;
+  const note = $('#psNote'), tog = $('#psBtn');
+  note.hidden = true; tog.setAttribute('aria-expanded', 'false');
+  note.replaceChildren(...c.ps.map(t => { const p = document.createElement('p'); p.textContent = t; return p; }));
+  $('#prog').innerHTML = `${CARDS.map((_, k) => `<i class="${k <= i ? 'on' : ''}"></i>`).join('')}<span>${n} / 03</span>`;
+  const b = $('#cardBody'); b.classList.remove('pop'); void b.offsetWidth; if (!RM) b.classList.add('pop');
+}
+/* the tucked-in note: opens in place, and scrolls only if it runs off the screen */
+$('#psBtn').addEventListener('click', () => {
+  const note = $('#psNote'), tog = $('#psBtn'), open = note.hidden;
+  note.hidden = !open; tog.setAttribute('aria-expanded', String(open));
+  if (!open) return;
+  const over = $('#nextBtn').getBoundingClientRect().bottom + 20 - innerHeight;
+  if (over > 0) scrollBy({ top: Math.min(over, tog.getBoundingClientRect().top - 12), behavior: RM ? 'auto' : 'smooth' });
+});
+/* ---------- a soft little lullaby, made in the browser (no audio file) ---------- */
+const VOL = 1.5, BEAT = 60 / 70;
+const CHORDS = [
+  { bass: 41, tones: [53, 57, 60, 64] }, // F
+  { bass: 38, tones: [50, 53, 57, 60] }, // Dm
+  { bass: 34, tones: [46, 50, 53, 57] }, // Bb
+  { bass: 36, tones: [48, 53, 55, 58] }, // C
+];
+const TUNE = [ // per bar: [beat, note, length in beats]
+  [[0, 72, 1.5], [2, 69, 1], [3, 67, 1]],
+  [[0, 69, 2], [2.5, 65, 1.5]],
+  [[0, 65, 1], [1, 67, 1], [2, 69, 2]],
+  [[0, 67, 3]],
+  [[0, 72, 1], [1, 74, 1], [2, 72, 1], [3, 69, 1]],
+  [[0, 69, 2], [2, 67, 1], [3, 65, 1]],
+  [[0, 62, 1.5], [1.5, 65, .5], [2, 69, 2]],
+  [[0, 67, 2], [2, 65, 2]],
+];
+const ARP = [0, 2, 1, 3, 2, 1, 3, 2];
+const hz = n => 440 * Math.pow(2, (n - 69) / 12);
+let ac = null, master, soft, echo, nextBar = 0, barNo = 0, musicOn = false;
+function note(type, n, at, len, vol, out = soft) {
+  const o = ac.createOscillator(), v = ac.createGain();
+  o.type = type; o.frequency.value = hz(n);
+  v.gain.setValueAtTime(0, at);
+  v.gain.linearRampToValueAtTime(vol, at + Math.min(.03, len / 3));
+  v.gain.exponentialRampToValueAtTime(.0001, at + len);
+  o.connect(v); v.connect(out);
+  o.start(at); o.stop(at + len + .05);
+}
+function scheduleBars() {
+  if (!ac || !musicOn || document.hidden) return;
+  while (nextBar < ac.currentTime + .6) {
+    const c = CHORDS[barNo % 4], t = nextBar;
+    c.tones.forEach(n => note('sine', n, t, BEAT * 4.2, .035));
+    note('triangle', c.bass, t, BEAT * 2.2, .1);
+    note('triangle', c.bass, t + BEAT * 2.5, BEAT * 1.4, .07);
+    ARP.forEach((k, s) => note('triangle', c.tones[k] + 12, t + s * BEAT / 2, BEAT * .8, .035));
+    TUNE[barNo % 8].forEach(([b, n, l]) => {
+      const at = t + b * BEAT, d = l * BEAT + .4;
+      note('square', n, at, d, .03, echo);
+      note('sine', n, at, d, .05, echo);
+    });
+    nextBar += BEAT * 4; barNo++;
+  }
+}
+function startMusic() {
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if (musicOn || !AC) return;
+  if (!ac) {
+    ac = new AC();
+    master = ac.createGain(); master.gain.value = 0; master.connect(ac.destination);
+    soft = ac.createBiquadFilter(); soft.type = 'lowpass'; soft.frequency.value = 1500; soft.connect(master);
+    echo = ac.createGain(); echo.connect(soft);
+    const d = ac.createDelay(1), fb = ac.createGain(); d.delayTime.value = BEAT * .75; fb.gain.value = .28;
+    echo.connect(d); d.connect(fb); fb.connect(d); d.connect(soft);
+    nextBar = ac.currentTime + .15;
+    setInterval(scheduleBars, 200);
+  }
+  musicOn = true;
+  ac.resume();
+  master.gain.cancelScheduledValues(ac.currentTime);
+  master.gain.setTargetAtTime(VOL, ac.currentTime, 1);
+  scheduleBars();
+  const mb = $('#mb'); mb.hidden = false; mb.classList.remove('paused'); mb.setAttribute('aria-label', 'Pause music');
+}
+function stopMusic() {
+  musicOn = false;
+  master.gain.cancelScheduledValues(ac.currentTime);
+  master.gain.setTargetAtTime(0, ac.currentTime, .12);
+  setTimeout(() => { if (!musicOn) ac.suspend(); }, 500);
+  const mb = $('#mb'); mb.classList.add('paused'); mb.setAttribute('aria-label', 'Play music');
+}
+$('#mb').addEventListener('click', () => { if (musicOn) stopMusic(); else startMusic(); });
+document.addEventListener('visibilitychange', () => { if (!ac || !musicOn) return; if (document.hidden) ac.suspend(); else ac.resume(); });
+
+$('#openBtn').addEventListener('click', () => { if (busy) return; if (!ac) startMusic(); dissolve(() => { i = 0; renderCard(); show('card'); $('#nextBtn').focus({ preventScroll: true }); }); });
+$('#nextBtn').addEventListener('click', () => {
+  if (busy) return;
+  if (i < CARDS.length - 1) { i++; renderCard(); scrollTo(0, 0); return; }
+  dissolve(() => { quiet = true; show('end'); build(); $('#closeBtn').focus({ preventScroll: true }); });
+});
+$('#closeBtn').addEventListener('click', () => { if (busy) return; dissolve(() => { quiet = false; i = 0; show('open'); build(); $('#openBtn').focus({ preventScroll: true }); }); });
+
+build();
+})();
+</script>
+</body>
+</html>
